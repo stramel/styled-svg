@@ -20,7 +20,7 @@ const writeFile = async (filePath, content, options) => {
 }
 
 const endsWithSvg = /\.svg$/i
-const viewBoxAttribute = /viewBox="([\s\d.]+)"/i
+const viewBoxAttribute = /viewBox="([\s-\d.]+)"/i
 const whitespace = /\s+/
 
 const join = (...args) => path.normalize(path.join(...args))
