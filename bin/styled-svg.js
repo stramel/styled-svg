@@ -9,13 +9,13 @@ const commandLineArgs = require('command-line-args')
 
 const optionsDefinitions = [
   {
-    name: 'sources',
+    name: 'input',
     description: 'The input files to process.',
+    alias: 'i',
     type: String,
     multiple: true,
     defaultOption: true,
-    defaultValue: ['**/*.svg'],
-    typeLabel: '<files>'
+    defaultValue: ['**/*.svg']
   },
   {
     name: 'clean',
@@ -44,9 +44,9 @@ const optionsDefinitions = [
   },
   {
     name: 'help',
+    description: 'Displays this usage guide.',
     alias: 'h',
-    type: Boolean,
-    description: 'Displays this usage guide.'
+    type: Boolean
   }
 ]
 
@@ -65,7 +65,7 @@ if (options.help || options._unknown) {
   ])
   console.log(usage)
 } else {
-  // Shim friendly options
+  // Shim unfriendly options
   options.outputDir = options['output-dir']
   options.testDir = options['test-dir']
   options.templatesDir = options['templates-dir']
