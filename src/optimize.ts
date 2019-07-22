@@ -1,21 +1,21 @@
-const SVGO = require('svgo')
-const crypto = require('crypto')
+import SVGO from 'svgo'
+import crypto from 'crypto'
 
-const removeXmlns = require('./svgo-plugins/removeXmlns')
-const addKeyAttribute = require('./svgo-plugins/addKeyAttribute')
+import removeXMLNS from './svgo-plugins/removeXmlns'
+import addKeyAttribute from './svgo-plugins/addKeyAttribute'
 
-module.exports = content => {
+// QUESTION: Is this a string?
+export default function (content: string) {
   // generate a unique id prefix, to ensure id's stay unique
   const hash = crypto.createHash('sha1').update(content).digest('hex').slice(-10)
 
-  const svgoOptions = {
+  const svgoOptions: SVGO.Options = {
     js2svg: {
       pretty: true,
       indent: 2
     },
     plugins: [
-      { removeXmlns },
-      { removeXMLNS: true },
+      { removeXMLNS },
       { removeScriptElement: true },
       { removeDimensions: true },
       { cleanupIDs: {

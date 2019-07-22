@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   type: 'full',
   description: 'adds a key attribute for all direct children of <svg /> for React',
   fn: tree => {

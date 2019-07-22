@@ -1,15 +1,18 @@
 import { css } from 'styled-components'
+import { Size } from 'types';
 
 // somehow sizes is ending up in markup, even if it is not a valid svg attribute
 // until we have a better solution, just render it empty, instead to '[Object object]'
-export const sanitizeSizes = sizes =>
-  Object.defineProperty(sizes, 'toString', {
+export function sanitizeSizes(sizes: Size) {
+  return Object.defineProperty(sizes, 'toString', {
     value: () => '',
     enumerable: false
   })
+}
 
-export function createHelpers (width, height) {
-  const getDimensions = (size, sizes) => {
+export function createHelpers(width: number, height: number) {
+  // TODO
+  function getDimensions(size: Size | Size['name'], sizes?: Size[]) {
     if (
       size &&
       typeof size.width === 'number' &&
@@ -21,7 +24,7 @@ export function createHelpers (width, height) {
     return size && sizes[size] ? sizes[size] : { width, height }
   }
 
-  const getCss = (size, sizes, fillColor, fillColorRule, noStyles) => {
+  function getCss(size: Size, sizes?: Size[], fillColor?: string, fillColorRule?: string, noStyles?: boolean) {
     if (noStyles) {
       return ''
     }
@@ -39,7 +42,7 @@ export function createHelpers (width, height) {
     `
   }
 
-  const propsToCss = ({ size, sizes, fillColor, fillColorRule, noStyles }) =>
+  const propsToCss = ({ size, sizes, fillColor, fillColorRule, noStyles }: { size: Size, sizes?: Size[], fillColor?: string, fillColorRule?: string, noStyles?: boolean }) =>
     getCss(size, sizes, fillColor, fillColorRule, noStyles)
 
   return { getDimensions, getCss, propsToCss }

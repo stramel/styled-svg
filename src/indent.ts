@@ -1,4 +1,4 @@
-const { camelCase } = require('./stringOperations')
+import { camelCase } from './stringOperations'
 
 const tagWithAttributes = /(<\/?)([^ ]*) ?([^/]*)(\/?>)/
 const doubleQuotes = /"/g
@@ -7,8 +7,11 @@ const attributesAndValues = /[^=]*="[^"]*"/g
 
 const indentBase = 2
 
-const indentLine = indentLevel => str => ' '.repeat(indentLevel) + str
-const getStyleAttribute = str => {
+function indentLine(indentLevel: number){
+  return (str: string) => ' '.repeat(indentLevel) + str
+}
+
+function getStyleAttribute (str: string) {
   const trimmedStr = str.trim()
   const props = trimmedStr.substring('style="'.length, trimmedStr.length - 1).split(';')
   return [
@@ -21,16 +24,20 @@ const getStyleAttribute = str => {
   ]
 }
 
-module.exports = svg => svg
+export default function(svg: string) {
+  return svg
   .split('\n')
-  .reduce((buffer, line, lineIndex) => {
+  .reduce<string[]>((buffer, line) => {
     const matches = line.match(tagWithAttributes)
-    if (!matches) { return buffer }
+    if (!matches) {
+      return buffer
+    }
     const closingTag = matches[1] === '</'
     const tag = matches[2]
     const attrsStr = matches[3]
     const autoclosingTag = matches[4] === '/>'
-    const indentLevel = line.match(leadingSpaces)[1].length
+
+    const indentLevel = line.match(leadingSpaces)![1].length
     const indentParentLine = indentLine(indentLevel + indentBase)
     const indentChildLine = indentLine(indentLevel + indentBase + 2)
     const attributes = (attrsStr.match(attributesAndValues) || [])
@@ -64,3 +71,4 @@ module.exports = svg => svg
   }, [])
   .join('\n')
   .trim()
+}

@@ -1,5 +1,7 @@
-const serializeSizes = options => {
-  const sizes = []
+import { Options, Size } from './types'
+
+export function serializeSizes(options: Options) {
+  const sizes: Size[] = []
   if (options.size) {
     options.size.forEach(size => {
       const [name, dimesions] = size.split(':').map(part => part.trim())
@@ -14,5 +16,3 @@ const serializeSizes = options => {
     `\n  ${name}: { width: ${width}, height: ${height} }`
   )}\n}`
 }
-
-module.exports = serializeSizes

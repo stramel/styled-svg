@@ -1,13 +1,15 @@
-const prettier = require('prettier')
-const fs = require('fs-extra')
-const path = require('path')
+import prettier from 'prettier'
+import fs from 'fs-extra'
+import path from 'path'
+import { Options } from './types'
 
 const indent = require('./indent')
 const optimize = require('./optimize')
-const serializeSizes = require('./serializeSizes')
-const { pascalCase } = require('./stringOperations')
+import serializeSizes from './serializeSizes'
+import { pascalCase } from './stringOperations'
 
-const writeOut = async (filePath, content, options) => {
+
+async function writeOut(filePath: string, content: string, options: Options) {
   if (options.dryRun) {
     console.log('\n')
     console.log(filePath)
@@ -22,9 +24,11 @@ const endsWithSvg = /\.svg$/i
 const viewBoxAttribute = /viewBox="([\s-\d.]+)"/i
 const whitespace = /\s+/
 
-const join = (...args) => path.normalize(path.join(...args))
+function join(...args: string[]) {
+  return path.normalize(path.join(...args))
+}
 
-const convertFile = async (filePath, templates, options) => {
+async function convertFile(filePath: string, templates: Templates, options: Options) {
   let viewBox = [0, 0, 0, 0]
 
   // determine names
@@ -47,7 +51,7 @@ const convertFile = async (filePath, templates, options) => {
   if (tempViewBox && tempViewBox[1].trim()) {
     tempViewBox = tempViewBox[1].trim().split(whitespace)
     if (tempViewBox.length === 4) {
-      viewBox = tempViewBox.map(number => Math.round(parseFloat(number || 0)))
+      viewBox = tempViewBox.map(number => Math.round(parseFloat(number) || 0))
       foundViewbox = true
     }
   }
@@ -80,12 +84,12 @@ const convertFile = async (filePath, templates, options) => {
       prettier.format(
         templates.component
           .replace('##SVG##', formattedContent)
-          .replace('##WIDTH##', viewBox[2])
-          .replace('##HEIGHT##', viewBox[3])
+          .replace('##WIDTH##', viewBox[2].toString())
+          .replace('##HEIGHT##', viewBox[3].toString())
           .replace('##VIEWBOX##', viewBox.join(' '))
           .replace('##NAME##', displayName)
           .replace('\'##SIZES##\'', sizes),
-        prettierConfig
+        prettierConfig || undefined
       ),
       options
     ),
@@ -105,17 +109,22 @@ const convertFile = async (filePath, templates, options) => {
   )
 }
 
-module.exports = async (files, options) => {
+type Templates = {
+  component: string
+  test: string
+}
+
+export default async function(files: string[], options: Options) {
   // load templates
   const templatesDir = options.templatesDir || join(__dirname, '..', 'templates')
-  const templates = {
+  const templates: Templates = {
     component: await fs.readFile(join(templatesDir, 'component.js'), 'utf8'),
     test: await fs.readFile(join(templatesDir, 'test.js'), 'utf8')
   }
 
   // clean output directories
   if (options.clean) {
-    const del = require('del')
+    const del = (await import('del')).default
     if (options.outputDir) {
       await del([
         join(options.outputDir, '*.js')
